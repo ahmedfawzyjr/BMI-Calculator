@@ -1,0 +1,21 @@
+{
+  "appTitle": "BMI CALCULATOR",
+  "male": "MALE",
+  "female": "FEMALE",
+  "height": "HEIGHT",
+  "weight": "WEIGHT",
+  "age": "AGE",
+  "calculate": "CALCULATE",
+  "yourResult": "Your Result",
+  "normalRange": "Normal BMI range:",
+  "normalRangeValue": "18.5 - 25 kg/m2",
+  "saveResult": "SAVE RESULT",
+  "recalculate": "RE-CALCULATE",
+  "cm": "cm",
+  "resultUnderweight": "Underweight",
+  "resultNormal": "Normal",
+  "resultOverweight": "Overweight",
+  "adviceUnderweight": "You have a lower than normal body weight. You can eat a bit more.",
+  "adviceNormal": "You have a normal body weight. Good job!",
+  "adviceOverweight": "You have a higher than normal body weight. Try to exercise more."
+}

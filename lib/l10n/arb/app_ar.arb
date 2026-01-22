@@ -1,0 +1,21 @@
+{
+  "appTitle": "حاسبة مؤشر كتلة الجسم",
+  "male": "ذكر",
+  "female": "أنثى",
+  "height": "الطول",
+  "weight": "الوزن",
+  "age": "العمر",
+  "calculate": "احسب",
+  "yourResult": "نتيجتك",
+  "normalRange": "معدل الجسم الطبيعي:",
+  "normalRangeValue": "18.5 - 25 كجم/م2",
+  "saveResult": "حفظ النتيجة",
+  "recalculate": "إعادة الحساب",
+  "cm": "سم",
+  "resultUnderweight": "نحيف",
+  "resultNormal": "طبيعي",
+  "resultOverweight": "وزن زائد",
+  "adviceUnderweight": "لديك وزن جسم أقل من الطبيعي. يمكنك أن تأكل أكثر قليلاً.",
+  "adviceNormal": "لديك وزن جسم طبيعي. عمل جيد!",
+  "adviceOverweight": "لديك وزن جسم أعلى من الطبيعي. حاول ممارسة الرياضة أكثر."
+}
