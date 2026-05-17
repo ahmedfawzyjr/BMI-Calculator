@@ -66,6 +66,8 @@ class _BMIGaugeState extends State<BMIGauge>
         return AppColors.normal;
       case BMICategory.overweight:
         return AppColors.overweight;
+      case BMICategory.obese:
+        return AppColors.obese;
     }
   }
 
@@ -125,7 +127,7 @@ class _BMIGaugePainter extends CustomPainter {
 
   void _drawBackgroundArc(Canvas canvas, Offset center, double radius) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withValues(alpha: 0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 20
       ..strokeCap = StrokeCap.round;
@@ -141,9 +143,10 @@ class _BMIGaugePainter extends CustomPainter {
 
   void _drawColoredSegments(Canvas canvas, Offset center, double radius) {
     final segments = [
-      (AppColors.underweight, 0.0, 0.33),
-      (AppColors.normal, 0.33, 0.33),
-      (AppColors.overweight, 0.66, 0.34),
+      (AppColors.underweight, 0.0, 0.25),
+      (AppColors.normal, 0.25, 0.25),
+      (AppColors.overweight, 0.5, 0.25),
+      (AppColors.obese, 0.75, 0.25),
     ];
 
     for (final segment in segments) {
@@ -165,7 +168,7 @@ class _BMIGaugePainter extends CustomPainter {
 
   void _drawTickMarks(Canvas canvas, Offset center, double radius) {
     final tickPaint = Paint()
-      ..color = Colors.white.withOpacity(0.5)
+      ..color = Colors.white.withValues(alpha: 0.5)
       ..strokeWidth = 2;
 
     for (int i = 0; i <= 6; i++) {
@@ -187,7 +190,7 @@ class _BMIGaugePainter extends CustomPainter {
     
     // Needle shadow
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.3)
+      ..color = Colors.black.withValues(alpha: 0.3)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
     
     final shadowEnd = center + Offset(
@@ -198,7 +201,7 @@ class _BMIGaugePainter extends CustomPainter {
     
     // Needle glow
     final glowPaint = Paint()
-      ..color = categoryColor.withOpacity(0.5)
+      ..color = categoryColor.withValues(alpha: 0.5)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8)
       ..strokeWidth = 6;
     
@@ -219,7 +222,7 @@ class _BMIGaugePainter extends CustomPainter {
   void _drawCenterCap(Canvas canvas, Offset center) {
     // Outer glow
     final glowPaint = Paint()
-      ..color = AppColors.hotPink.withOpacity(0.5)
+      ..color = AppColors.hotPink.withValues(alpha: 0.5)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
     canvas.drawCircle(center, 15, glowPaint);
     

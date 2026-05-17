@@ -10,7 +10,9 @@ class Animated3DCard extends StatefulWidget {
   final bool isSelected;
   final VoidCallback? onTap;
   final double maxTilt;
+  final Color? selectionColor;
   final EdgeInsetsGeometry? margin;
+  final bool enableTilt;
 
   const Animated3DCard({
     super.key,
@@ -20,7 +22,9 @@ class Animated3DCard extends StatefulWidget {
     this.isSelected = false,
     this.onTap,
     this.maxTilt = 0.1,
+    this.selectionColor,
     this.margin,
+    this.enableTilt = true,
   });
 
   @override
@@ -75,8 +79,8 @@ class _Animated3DCardState extends State<Animated3DCard>
 
     return GestureDetector(
       onTap: widget.onTap,
-      onPanUpdate: _onPanUpdate,
-      onPanEnd: _onPanEnd,
+      onPanUpdate: widget.enableTilt ? _onPanUpdate : null,
+      onPanEnd: widget.enableTilt ? _onPanEnd : null,
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) => setState(() => _isPressed = false),
       onTapCancel: () => setState(() => _isPressed = false),
@@ -93,20 +97,20 @@ class _Animated3DCardState extends State<Animated3DCard>
           borderRadius: BorderRadius.circular(widget.borderRadius),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: Offset(_rotateY * 20, _rotateX * -20 + 5),
             ),
             if (widget.isSelected)
               BoxShadow(
-                color: AppColors.hotPink.withOpacity(0.3),
+                color: (widget.selectionColor ?? AppColors.hotPink).withValues(alpha: 0.3),
                 blurRadius: 25,
                 spreadRadius: 2,
               ),
           ],
           border: widget.isSelected
               ? Border.all(
-                  color: AppColors.hotPink.withOpacity(0.5),
+                  color: (widget.selectionColor ?? AppColors.hotPink).withValues(alpha: 0.5),
                   width: 2,
                 )
               : null,

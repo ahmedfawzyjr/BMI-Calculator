@@ -57,6 +57,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resultOverweight => 'Overweight';
 
   @override
+  String get obese => 'Obese';
+
+  @override
   String get adviceUnderweight =>
       'You have a lower than normal body weight. You can eat a bit more.';
 
@@ -66,4 +69,83 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get adviceOverweight =>
       'You have a higher than normal body weight. Try to exercise more.';
+
+  @override
+  String get adviceObese =>
+      'You have an obese body weight. Please consult a doctor or a nutritionist.';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get clearHistory => 'Clear History';
+
+  @override
+  String get clearHistoryConfirm =>
+      'Are you sure you want to clear your entire history? This action cannot be undone.';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get calculateBmiPrompt => 'Calculate your BMI to see trends here!';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get enableSound => 'Sound Effects';
+
+  @override
+  String get enableHaptic => 'Haptic Feedback';
+
+  @override
+  String get enableParticles => 'Particle Background';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get theme => 'Theme Mode';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get averageBmi => 'Avg BMI';
+
+  @override
+  String get maxBmi => 'Max BMI';
+
+  @override
+  String get minBmi => 'Min BMI';
+
+  @override
+  String get totalCalculations => 'Total Calculations';
+
+  @override
+  String get noHistory => 'No history records found.';
+
+  @override
+  String get errorSelectGender => 'Please select your gender first!';
+
+  @override
+  String get errorInvalidHeight => 'Height must be between 50 and 250 cm!';
+
+  @override
+  String get errorInvalidWeight => 'Weight must be between 10 and 300 kg!';
+
+  @override
+  String get errorInvalidAge => 'Age must be between 1 and 120 years!';
+
+  @override
+  String shareText(String bmi, String category) {
+    return 'My BMI is $bmi ($category)! Calculated using modern BMI App.';
+  }
 }

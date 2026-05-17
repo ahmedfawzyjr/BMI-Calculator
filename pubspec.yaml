@@ -38,6 +38,13 @@ dependencies:
   glassmorphism: ^3.0.0
   particles_flutter: ^0.1.4
 
+  # New Enhancements
+  shared_preferences: ^2.3.2
+  share_plus: ^10.0.0
+  screenshot: ^3.0.0
+  path_provider: ^2.1.4
+  csv: ^6.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

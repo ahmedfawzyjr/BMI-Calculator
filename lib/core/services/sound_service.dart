@@ -1,111 +1,87 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bmi_calculator/core/data/preferences_repository.dart';
 
-/// Sound effects service for premium audio feedback
+/// Premium audio feedback service linked directly to User Preferences
 class SoundService {
+  final Ref _ref;
   final AudioPlayer _player = AudioPlayer();
-  bool _isMuted = false;
 
-  /// Toggle mute state
-  void toggleMute() {
-    _isMuted = !_isMuted;
+  SoundService(this._ref) {
+    // Set default volume level
+    _player.setVolume(0.3).catchError((_) {});
   }
 
-  /// Get current mute state
-  bool get isMuted => _isMuted;
+  /// Check if sound is active in settings
+  bool get _isEnabled {
+    try {
+      return _ref.read(preferencesRepositoryProvider).isSoundEnabled();
+    } catch (_) {
+      return true; // Default to true if provider not initialized
+    }
+  }
 
-  /// Play a tap/click sound
+  /// Internal player helper with safety checks
+  Future<void> _playSound(String assetPath) async {
+    if (!_isEnabled) return;
+    try {
+      // Stop currently playing to avoid overlaps and play new sound
+      await _player.stop();
+      await _player.play(AssetSource(assetPath));
+    } catch (e) {
+      // Silently fail if audio system is not available or files are missing
+    }
+  }
+
+  /// Play tap/click sound
   Future<void> playTap() async {
-    if (_isMuted) return;
-    await _playSystemSound(SystemSoundType.click);
+    await _playSound('sounds/tap.mp3');
   }
 
-  /// Play success sound (for healthy BMI)
+  /// Play success sound for healthy BMI (e.g. ideal outcome)
   Future<void> playSuccess() async {
-    if (_isMuted) return;
-    await _playTone(frequency: 880, duration: 150);
-    await Future.delayed(const Duration(milliseconds: 100));
-    await _playTone(frequency: 1100, duration: 200);
+    await _playSound('sounds/success.mp3');
   }
 
-  /// Play warning sound (for unhealthy BMI)
+  /// Play warning sound for underweight, overweight, or obese results
   Future<void> playWarning() async {
-    if (_isMuted) return;
-    await _playTone(frequency: 440, duration: 300);
+    await _playSound('sounds/warning.mp3');
   }
 
-  /// Play calculation sound
+  /// Play calculation/processing sequence sound
   Future<void> playCalculate() async {
-    if (_isMuted) return;
-    await _playTone(frequency: 600, duration: 100);
-    await Future.delayed(const Duration(milliseconds: 50));
-    await _playTone(frequency: 800, duration: 100);
-    await Future.delayed(const Duration(milliseconds: 50));
-    await _playTone(frequency: 1000, duration: 150);
+    await _playSound('sounds/calculate.mp3');
   }
 
-  /// Play slider movement sound
+  /// Play slider tick sound on movement
   Future<void> playSlide() async {
-    if (_isMuted) return;
-    await _playSystemSound(SystemSoundType.click);
+    await _playSound('sounds/slide.mp3');
   }
 
-  /// Play app launch sound
+  /// Play app launch fanfare sound
   Future<void> playLaunch() async {
-    if (_isMuted) return;
-    await _playTone(frequency: 523, duration: 100); // C5
-    await Future.delayed(const Duration(milliseconds: 80));
-    await _playTone(frequency: 659, duration: 100); // E5
-    await Future.delayed(const Duration(milliseconds: 80));
-    await _playTone(frequency: 784, duration: 150); // G5
+    await _playSound('sounds/launch.mp3');
   }
 
-  /// Play counter increment sound
+  /// Play counter value increment sound
   Future<void> playIncrement() async {
-    if (_isMuted) return;
-    await _playTone(frequency: 700, duration: 50);
+    await _playSound('sounds/increment.mp3');
   }
 
-  /// Play counter decrement sound
+  /// Play counter value decrement sound
   Future<void> playDecrement() async {
-    if (_isMuted) return;
-    await _playTone(frequency: 500, duration: 50);
+    await _playSound('sounds/decrement.mp3');
   }
 
-  Future<void> _playTone({required double frequency, required int duration}) async {
-    // Using simple beep generation with AudioPlayer
-    // In production, you would use actual audio files
-    try {
-      await _player.setVolume(0.3);
-      // For now, we'll use a simple approach
-      // In real app, load from assets/sounds/
-    } catch (e) {
-      // Silently fail if audio is not available
-    }
-  }
-
-  Future<void> _playSystemSound(SystemSoundType type) async {
-    // Platform-specific system sounds handled here
-    try {
-      await _player.setVolume(0.2);
-    } catch (e) {
-      // Silently fail
-    }
-  }
-
+  /// Free up media player resources
   void dispose() {
     _player.dispose();
   }
 }
 
-enum SystemSoundType { click, alert }
-
-/// Provider for sound service
+/// Provider for SoundService
 final soundServiceProvider = Provider<SoundService>((ref) {
-  final service = SoundService();
+  final service = SoundService(ref);
   ref.onDispose(() => service.dispose());
   return service;
 });
-
-/// Provider for mute state
-final isMutedProvider = StateProvider<bool>((ref) => false);

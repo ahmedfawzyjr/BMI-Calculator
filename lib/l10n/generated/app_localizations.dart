@@ -194,6 +194,12 @@ abstract class AppLocalizations {
   /// **'Overweight'**
   String get resultOverweight;
 
+  /// No description provided for @obese.
+  ///
+  /// In en, this message translates to:
+  /// **'Obese'**
+  String get obese;
+
   /// No description provided for @adviceUnderweight.
   ///
   /// In en, this message translates to:
@@ -211,6 +217,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have a higher than normal body weight. Try to exercise more.'**
   String get adviceOverweight;
+
+  /// No description provided for @adviceObese.
+  ///
+  /// In en, this message translates to:
+  /// **'You have an obese body weight. Please consult a doctor or a nutritionist.'**
+  String get adviceObese;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @clearHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear History'**
+  String get clearHistory;
+
+  /// No description provided for @clearHistoryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear your entire history? This action cannot be undone.'**
+  String get clearHistoryConfirm;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @calculateBmiPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate your BMI to see trends here!'**
+  String get calculateBmiPrompt;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @enableSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound Effects'**
+  String get enableSound;
+
+  /// No description provided for @enableHaptic.
+  ///
+  /// In en, this message translates to:
+  /// **'Haptic Feedback'**
+  String get enableHaptic;
+
+  /// No description provided for @enableParticles.
+  ///
+  /// In en, this message translates to:
+  /// **'Particle Background'**
+  String get enableParticles;
+
+  /// No description provided for @exportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Mode'**
+  String get theme;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @averageBmi.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg BMI'**
+  String get averageBmi;
+
+  /// No description provided for @maxBmi.
+  ///
+  /// In en, this message translates to:
+  /// **'Max BMI'**
+  String get maxBmi;
+
+  /// No description provided for @minBmi.
+  ///
+  /// In en, this message translates to:
+  /// **'Min BMI'**
+  String get minBmi;
+
+  /// No description provided for @totalCalculations.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Calculations'**
+  String get totalCalculations;
+
+  /// No description provided for @noHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No history records found.'**
+  String get noHistory;
+
+  /// No description provided for @errorSelectGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your gender first!'**
+  String get errorSelectGender;
+
+  /// No description provided for @errorInvalidHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Height must be between 50 and 250 cm!'**
+  String get errorInvalidHeight;
+
+  /// No description provided for @errorInvalidWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight must be between 10 and 300 kg!'**
+  String get errorInvalidWeight;
+
+  /// No description provided for @errorInvalidAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Age must be between 1 and 120 years!'**
+  String get errorInvalidAge;
+
+  /// Text shared by the user about their BMI result
+  ///
+  /// In en, this message translates to:
+  /// **'My BMI is {bmi} ({category})! Calculated using modern BMI App.'**
+  String shareText(String bmi, String category);
 }
 
 class _AppLocalizationsDelegate

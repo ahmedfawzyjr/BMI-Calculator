@@ -1,4 +1,4 @@
-import 'package:bmi_calculator/core/router/app_router.dart';
+import 'package:bmi_calculator/core/data/preferences_repository.dart';
 import 'package:bmi_calculator/features/bmi/data/models/bmi_history.dart';
 import 'package:bmi_calculator/features/bmi/domain/bmi_category.dart';
 import 'package:bmi_calculator/features/bmi/presentation/providers/bmi_providers.dart';
@@ -11,13 +11,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   setUpAll(() async {
+    GoogleFonts.config.allowRuntimeFetching = false; // Prevents test runner from hanging on network calls
     await loadAppFonts();
+    SharedPreferences.setMockInitialValues({});
   });
 
   testGoldens('App Store Screenshots', (tester) async {
+    final prefs = await SharedPreferences.getInstance();
+    final repository = PreferencesRepository(prefs);
+
     final builder = DeviceBuilder()
       ..overrideDevicesForAllScenarios(devices: [
         Device.phone,
@@ -29,16 +38,24 @@ void main() {
     // Scenario 1: Input Page (Home)
     builder.addScenario(
       name: 'Input Page',
-      widget: const ProviderScope(
-        child: MyAppWrapper(child: InputPage()),
+      widget: ProviderScope(
+        overrides: [
+          preferencesRepositoryProvider.overrideWithValue(repository),
+          historyProvider.overrideWith((ref) => []),
+        ],
+        child: const MyAppWrapper(child: InputPage()),
       ),
     );
 
     // Scenario 2: Result Page
     builder.addScenario(
       name: 'Result Page',
-      widget: const ProviderScope(
-        child: MyAppWrapper(
+      widget: ProviderScope(
+        overrides: [
+          preferencesRepositoryProvider.overrideWithValue(repository),
+          historyProvider.overrideWith((ref) => []),
+        ],
+        child: const MyAppWrapper(
           child: ResultPage(
             bmi: '22.5',
             category: BMICategory.normal,
@@ -53,7 +70,8 @@ void main() {
       name: 'History Page',
       widget: ProviderScope(
         overrides: [
-          historyProvider.overrideWith((ref) => Future.value([
+          preferencesRepositoryProvider.overrideWithValue(repository),
+          historyProvider.overrideWith((ref) => [
                 BMIHistory(
                   id: '1',
                   bmi: 22.5,
@@ -66,7 +84,7 @@ void main() {
                   category: BMICategory.overweight,
                   date: DateTime(2023, 10, 20, 15, 45),
                 ),
-              ])),
+              ]),
         ],
         child: const MyAppWrapper(child: HistoryScreen()),
       ),

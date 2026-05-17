@@ -41,12 +41,12 @@ class GlassCard extends StatelessWidget {
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: effectiveGlowColor.withOpacity(0.4),
+                    color: effectiveGlowColor.withValues(alpha: 0.4),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
                   BoxShadow(
-                    color: effectiveGlowColor.withOpacity(0.2),
+                    color: effectiveGlowColor.withValues(alpha: 0.2),
                     blurRadius: 40,
                     spreadRadius: 5,
                   ),
@@ -64,8 +64,8 @@ class GlassCard extends StatelessWidget {
                 gradient: AppGradients.glassOverlay,
                 border: Border.all(
                   color: isActive
-                      ? effectiveGlowColor.withOpacity(0.5)
-                      : Colors.white.withOpacity(0.1),
+                      ? effectiveGlowColor.withValues(alpha: 0.5)
+                      : Colors.white.withValues(alpha: 0.1),
                   width: isActive ? 2 : 1,
                 ),
               ),

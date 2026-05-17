@@ -15,7 +15,46 @@
   "resultUnderweight": "Underweight",
   "resultNormal": "Normal",
   "resultOverweight": "Overweight",
+  "obese": "Obese",
   "adviceUnderweight": "You have a lower than normal body weight. You can eat a bit more.",
   "adviceNormal": "You have a normal body weight. Good job!",
-  "adviceOverweight": "You have a higher than normal body weight. Try to exercise more."
+  "adviceOverweight": "You have a higher than normal body weight. Try to exercise more.",
+  "adviceObese": "You have an obese body weight. Please consult a doctor or a nutritionist.",
+  "history": "History",
+  "clearHistory": "Clear History",
+  "clearHistoryConfirm": "Are you sure you want to clear your entire history? This action cannot be undone.",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "calculateBmiPrompt": "Calculate your BMI to see trends here!",
+  "settings": "Settings",
+  "enableSound": "Sound Effects",
+  "enableHaptic": "Haptic Feedback",
+  "enableParticles": "Particle Background",
+  "exportData": "Export Data",
+  "theme": "Theme Mode",
+  "language": "Language",
+  "statistics": "Statistics",
+  "averageBmi": "Avg BMI",
+  "maxBmi": "Max BMI",
+  "minBmi": "Min BMI",
+  "totalCalculations": "Total Calculations",
+  "noHistory": "No history records found.",
+  "errorSelectGender": "Please select your gender first!",
+  "errorInvalidHeight": "Height must be between 50 and 250 cm!",
+  "errorInvalidWeight": "Weight must be between 10 and 300 kg!",
+  "errorInvalidAge": "Age must be between 1 and 120 years!",
+  "shareText": "My BMI is {bmi} ({category})! Calculated using modern BMI App.",
+  "@shareText": {
+    "description": "Text shared by the user about their BMI result",
+    "placeholders": {
+      "bmi": {
+        "type": "String",
+        "example": "22.5"
+      },
+      "category": {
+        "type": "String",
+        "example": "Normal"
+      }
+    }
+  }
 }

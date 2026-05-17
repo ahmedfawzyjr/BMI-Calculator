@@ -1,0 +1,40 @@
+<div class="layout-row align-items-center justify-content-center mt-50">
+
+  <section class="layout-column align-items-center justify-content-between">
+    <span class="input layout-row">
+        <input 
+          type="number" 
+          class="large"
+          data-test-id="app-input1"
+          [ngModel]="amount1"
+          (ngModelChange)="onAmount1Change($event)"/>
+        <label class="suffix" data-test-id="app-label1">{{getUnitLabel(unit1)}}</label>
+    </span>
+    <select 
+      data-test-id="app-select1" 
+      [ngModel]="unit1" 
+      (ngModelChange)="onUnit1Change($event)">
+      <option *ngFor="let option of lengthOptions" [value]="option.id">{{option.label}}</option>
+    </select>
+  </section>
+
+  <label>⇋</label>
+
+  <section class="layout-column align-items-center justify-content-between">
+      <span class="input layout-row">
+          <input 
+            type="number" 
+            class="large"
+            data-test-id="app-input2"
+            [ngModel]="amount2"
+            (ngModelChange)="onAmount2Change($event)"/>
+          <label class="suffix" data-test-id="app-label2">{{getUnitLabel(unit2)}}</label>
+      </span>
+      <select 
+        data-test-id="app-select2" 
+        [ngModel]="unit2" 
+        (ngModelChange)="onUnit2Change($event)">
+        <option *ngFor="let option of lengthOptions" [value]="option.id">{{option.label}}</option>
+      </select>
+    </section>
+</div>

@@ -1,12 +1,19 @@
+import 'dart:io';
+import 'package:csv/csv.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:bmi_calculator/core/widgets/glass_card.dart';
 import 'package:bmi_calculator/core/theme/app_theme.dart';
 import 'package:bmi_calculator/features/bmi/presentation/providers/bmi_providers.dart';
 import 'package:bmi_calculator/features/bmi/presentation/widgets/bmi_chart.dart';
+import 'package:bmi_calculator/features/bmi/domain/bmi_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bmi_calculator/l10n/generated/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:bmi_calculator/core/services/sound_service.dart';
+import 'package:bmi_calculator/core/services/haptic_service.dart';
 
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
@@ -15,6 +22,7 @@ class HistoryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final historyAsync = ref.watch(historyProvider);
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -22,13 +30,107 @@ class HistoryScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'History',
-          style: AppTextStyles.titleLarge,
+          l10n.history,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: AppColors.getTextPrimary(isDark),
+          ),
         ),
+        actions: [
+          // Export History CSV Button
+          IconButton(
+            icon: Icon(Icons.download_rounded, color: AppColors.getTextPrimary(isDark)),
+            tooltip: l10n.exportData,
+            onPressed: () async {
+              ref.read(hapticServiceProvider).lightImpact();
+              ref.read(soundServiceProvider).playTap();
+              
+              final history = historyAsync.value ?? [];
+              if (history.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.noHistory),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                return;
+              }
+              
+              try {
+                final csvData = [
+                  ['ID', 'BMI', 'Category', 'Date'],
+                  ...history.map((e) => [
+                    e.id,
+                    e.bmi.toStringAsFixed(1),
+                    e.category.name,
+                    e.date.toIso8601String(),
+                  ]),
+                ];
+                final csvString = const ListToCsvConverter().convert(csvData);
+                
+                final directory = await getTemporaryDirectory();
+                final csvFile = await File('${directory.path}/bmi_history.csv').create();
+                await csvFile.writeAsString(csvString);
+                
+                await Share.shareXFiles(
+                  [XFile(csvFile.path)],
+                  text: l10n.shareText('0.0', l10n.history),
+                );
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to export data: $e'),
+                      backgroundColor: AppColors.errorRed,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
+            },
+          ),
+          
+          // Clear All Records Button
+          IconButton(
+            icon: const Icon(Icons.delete_sweep_rounded, color: AppColors.errorRed),
+            tooltip: l10n.clearHistory,
+            onPressed: () async {
+              ref.read(hapticServiceProvider).heavyImpact();
+              ref.read(soundServiceProvider).playSuccess();
+              
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: AppColors.activeCard,
+                  title: Text(l10n.clearHistory, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  content: Text(l10n.clearHistoryConfirm, style: const TextStyle(color: Colors.white70)),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text(l10n.cancel, style: const TextStyle(color: Colors.white60)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.errorRed),
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text(l10n.confirm, style: const TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              );
+              
+              if (confirm == true) {
+                await ref.read(historyRepositoryProvider).clearHistory();
+                ref.invalidate(historyProvider);
+              }
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppGradients.background,
+        decoration: BoxDecoration(
+          gradient: isDark ? AppGradients.background : AppGradients.lightBackground,
         ),
         child: SafeArea(
           child: historyAsync.when(
@@ -41,10 +143,14 @@ class HistoryScreen extends ConsumerWidget {
                       Icon(
                         Icons.history_rounded,
                         size: 80,
-                        color: AppColors.textSecondary.withOpacity(0.5),
+                        color: AppColors.getTextSecondary(isDark).withValues(alpha: 0.5),
                       )
                           .animate(
-                            onPlay: (controller) => controller.repeat(reverse: true),
+                            onPlay: (controller) {
+                              if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+                                controller.repeat(reverse: true);
+                              }
+                            },
                           )
                           .scale(
                             begin: const Offset(1, 1),
@@ -53,15 +159,19 @@ class HistoryScreen extends ConsumerWidget {
                           ),
                       const SizedBox(height: 20),
                       Text(
-                        'No history yet',
-                        style: AppTextStyles.titleLarge.copyWith(
-                          color: AppColors.textSecondary,
+                        l10n.noHistory,
+                        style: AppTypography.headlineMedium(
+                          l10n.localeName == 'ar',
+                          AppColors.getTextSecondary(isDark),
                         ),
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Calculate your BMI to see it here',
-                        style: AppTextStyles.bodyMedium,
+                        l10n.calculateBmiPrompt,
+                        style: AppTypography.bodyLarge(
+                          l10n.localeName == 'ar',
+                          AppColors.getTextSecondary(isDark),
+                        ),
                       ),
                     ],
                   ),
@@ -73,7 +183,7 @@ class HistoryScreen extends ConsumerWidget {
               
               return Column(
                 children: [
-                  // BMI Chart
+                  // BMI Trends Chart
                   if (history.length >= 2)
                     Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -83,7 +193,7 @@ class HistoryScreen extends ConsumerWidget {
                         .fadeIn(delay: const Duration(milliseconds: 200))
                         .slideY(begin: -0.1, end: 0),
                   
-                  // History list
+                  // History List
                   Expanded(
                     child: ListView.builder(
                       itemCount: history.length,
@@ -93,18 +203,18 @@ class HistoryScreen extends ConsumerWidget {
                         
                         Color categoryColor;
                         switch (item.category) {
-                          case _:
+                          case BMICategory.underweight:
+                            categoryColor = AppColors.underweight;
+                            break;
+                          case BMICategory.normal:
                             categoryColor = AppColors.normal;
-                        }
-                        
-                        // Set category color based on category name
-                        final categoryName = item.category.name.toLowerCase();
-                        if (categoryName.contains('under')) {
-                          categoryColor = AppColors.underweight;
-                        } else if (categoryName.contains('normal')) {
-                          categoryColor = AppColors.normal;
-                        } else {
-                          categoryColor = AppColors.overweight;
+                            break;
+                          case BMICategory.overweight:
+                            categoryColor = AppColors.overweight;
+                            break;
+                          case BMICategory.obese:
+                            categoryColor = AppColors.obese;
+                            break;
                         }
                         
                         return Dismissible(
@@ -118,7 +228,7 @@ class HistoryScreen extends ConsumerWidget {
                               horizontal: 16,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.errorRed.withOpacity(0.3),
+                              color: AppColors.errorRed.withValues(alpha: 0.3),
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: const Icon(
@@ -138,7 +248,7 @@ class HistoryScreen extends ConsumerWidget {
                             padding: const EdgeInsets.all(16),
                             child: Row(
                               children: [
-                                // BMI Circle
+                                // BMI Circle Badge
                                 Container(
                                   width: 60,
                                   height: 60,
@@ -150,7 +260,7 @@ class HistoryScreen extends ConsumerWidget {
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: categoryColor.withOpacity(0.3),
+                                        color: categoryColor.withValues(alpha: 0.3),
                                         blurRadius: 10,
                                       ),
                                     ],
@@ -158,40 +268,51 @@ class HistoryScreen extends ConsumerWidget {
                                   child: Center(
                                     child: Text(
                                       item.bmi.toStringAsFixed(1),
-                                      style: AppTextStyles.titleLarge.copyWith(
+                                      style: TextStyle(
                                         color: categoryColor,
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 18,
                                       ),
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 16),
                                 
-                                // Details
+                                // History Record Details
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        item.category.name.toUpperCase(),
-                                        style: AppTextStyles.labelLarge.copyWith(
-                                          color: categoryColor,
+                                        item.category == BMICategory.underweight
+                                            ? l10n.resultUnderweight.toUpperCase()
+                                            : item.category == BMICategory.normal
+                                                ? l10n.resultNormal.toUpperCase()
+                                                : item.category == BMICategory.overweight
+                                                    ? l10n.resultOverweight.toUpperCase()
+                                                    : l10n.obese.toUpperCase(),
+                                        style: AppTypography.labelLarge(
+                                          l10n.localeName == 'ar',
+                                          categoryColor,
+                                        ).copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         DateFormat.yMMMd().add_jm().format(item.date),
-                                        style: AppTextStyles.bodyMedium,
+                                        style: AppTypography.bodyMedium(
+                                          l10n.localeName == 'ar',
+                                          AppColors.getTextSecondary(isDark),
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
                                 
-                                // Arrow
                                 Icon(
                                   Icons.chevron_right_rounded,
-                                  color: AppColors.textSecondary,
+                                  color: AppColors.getTextSecondary(isDark),
                                 ),
                               ],
                             ),
@@ -215,7 +336,7 @@ class HistoryScreen extends ConsumerWidget {
             loading: () => Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  AppColors.hotPink.withOpacity(0.7),
+                  AppColors.hotPink.withValues(alpha: 0.7),
                 ),
               ),
             ),
@@ -223,7 +344,7 @@ class HistoryScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.error_outline_rounded,
                     size: 60,
                     color: AppColors.errorRed,
@@ -231,8 +352,10 @@ class HistoryScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     'Error: $err',
-                    style: AppTextStyles.bodyLarge.copyWith(
+                    style: const TextStyle(
                       color: AppColors.errorRed,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],

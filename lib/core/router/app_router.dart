@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bmi_calculator/features/bmi/presentation/screens/input_page.dart';
 import 'package:bmi_calculator/features/bmi/presentation/screens/result_page.dart';
 import 'package:bmi_calculator/features/bmi/presentation/screens/history_screen.dart';
+import 'package:bmi_calculator/features/bmi/presentation/screens/settings_screen.dart';
 import 'package:bmi_calculator/features/splash/presentation/screens/splash_screen.dart';
 import 'package:bmi_calculator/core/theme/app_theme.dart';
 
@@ -78,6 +79,14 @@ final router = GoRouter(
         context: context,
         state: state,
         child: const HistoryScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/settings',
+      pageBuilder: (context, state) => _buildPremiumTransition(
+        context: context,
+        state: state,
+        child: const SettingsScreen(),
       ),
     ),
   ],

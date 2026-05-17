@@ -2,19 +2,21 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:particles_flutter/particles_flutter.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bmi_calculator/core/theme/app_theme.dart';
+import 'package:bmi_calculator/core/services/sound_service.dart';
+import 'package:bmi_calculator/core/services/haptic_service.dart';
 
 /// Premium animated splash screen with particles and 3D effects
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _rotationController;
   late AnimationController _scaleController;
@@ -35,6 +37,14 @@ class _SplashScreenState extends State<SplashScreen>
     
     _scaleController.forward();
     
+    // Play startup audio and haptic feedback
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        ref.read(soundServiceProvider).playLaunch();
+        ref.read(hapticServiceProvider).successNotification();
+      }
+    });
+    
     // Navigate to home after splash
     Future.delayed(const Duration(milliseconds: 3000), () {
       if (mounted) {
@@ -52,38 +62,18 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    // Dynamic theme background checks
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.deepSpaceStart,
+      backgroundColor: AppColors.getBgStart(isDark),
       body: Stack(
         children: [
           // Gradient background
           Container(
-            decoration: const BoxDecoration(
-              gradient: AppGradients.background,
+            decoration: BoxDecoration(
+              gradient: isDark ? AppGradients.background : AppGradients.lightBackground,
             ),
-          ),
-          
-          // Particle effect background
-          CircularParticle(
-            width: size.width,
-            height: size.height,
-            particleColor: AppColors.hotPink.withOpacity(0.3),
-            numberOfParticles: 80,
-            speedOfParticles: 1.5,
-            maxParticleSize: 4,
-            awayRadius: 0,
-            onTapAnimation: false,
-            isRandom: true,
-            isRandomColor: true,
-            randColorList: [
-              AppColors.hotPink.withOpacity(0.3),
-              AppColors.electricCyan.withOpacity(0.3),
-              AppColors.neonGreen.withOpacity(0.2),
-              Colors.white.withOpacity(0.2),
-            ],
-            connectDots: true,
           ),
           
           // Main content
@@ -123,12 +113,12 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.hotPink.withOpacity(0.5),
+                            color: AppColors.hotPink.withValues(alpha: 0.5),
                             blurRadius: 30,
                             spreadRadius: 5,
                           ),
                           BoxShadow(
-                            color: AppColors.hotPink.withOpacity(0.3),
+                            color: AppColors.hotPink.withValues(alpha: 0.3),
                             blurRadius: 60,
                             spreadRadius: 10,
                           ),
@@ -149,12 +139,14 @@ class _SplashScreenState extends State<SplashScreen>
                 
                 // Shimmer text
                 Shimmer.fromColors(
-                  baseColor: Colors.white,
+                  baseColor: AppColors.getTextPrimary(isDark),
                   highlightColor: AppColors.electricCyan,
                   period: const Duration(milliseconds: 2000),
                   child: Text(
                     'BMI Calculator',
-                    style: AppTextStyles.headlineLarge,
+                    style: AppTextStyles.headlineLarge.copyWith(
+                      color: AppColors.getTextPrimary(isDark),
+                    ),
                   ),
                 )
                     .animate()
@@ -167,7 +159,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Text(
                   'Premium Edition',
                   style: AppTextStyles.bodyLarge.copyWith(
-                    color: AppColors.textSecondary,
+                    color: AppColors.getTextSecondary(isDark),
                     letterSpacing: 3,
                   ),
                 )
@@ -184,7 +176,7 @@ class _SplashScreenState extends State<SplashScreen>
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.hotPink.withOpacity(0.7),
+                      AppColors.hotPink.withValues(alpha: 0.7),
                     ),
                   ),
                 )

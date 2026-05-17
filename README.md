@@ -55,8 +55,9 @@ dependencies:
 
 ### Prerequisites
 
-- Flutter SDK 3.0 or higher
-- Dart SDK 3.0 or higher
+- Flutter SDK `3.41.5` or higher
+- Dart SDK `3.11.3` or higher
+- Java Development Kit (JDK) `17` or `21`
 
 ### Installation
 
@@ -76,10 +77,38 @@ dependencies:
    dart run flutter_launcher_icons
    ```
 
-4. **Run the app**
+4. **Run the app (Debug / Profile)**
    ```bash
-   flutter run
+   flutter run --debug
+   flutter run --profile
    ```
+
+## 🧪 Testing Suite
+
+The project includes a comprehensive automated test suite consisting of unit, widget, and automated App Store golden screenshot tests (100% success rate).
+
+To run the complete test suite:
+```bash
+flutter test
+```
+
+### Coverage Highlights:
+- **Unit Tests**: Full verification of BMI category boundaries, calculator logic, and inputs.
+- **Widget & Screen Tests**: Interactive UI verification of settings toggles, history lists, navigation pages, and theme state persistence.
+- **Golden Tests**: Device layout and pixel-perfect screenshot rendering validation (located in `test/goldens/`).
+
+## 🔐 Production Release Signing & Optimization
+
+The Android build architecture has been fully upgraded to professional standards:
+- **Toolchains**: Modernized declarative Gradle build structure using **Gradle 8.14**, **Android Gradle Plugin 8.11.1**, and **Kotlin 2.2.20** with full **Java 21** compatibility.
+- **Tuned Build JVM**: Configured with optimized heap space limits (`-Xmx4G`) and modern Garbage Collection to prevent compilation bottlenecks.
+- **Bypassed Jetifier**: Jetifier is disabled (`android.enableJetifier=false`) to significantly speed up compilation of precompiled Flutter native libraries.
+- **Automatic Signing**: The system automatically reads `key.properties` from the `android/` directory (which is protected via `.gitignore` to prevent credential leaks) and signs your APKs seamlessly.
+
+To build a signed release APK:
+```bash
+flutter build apk --release
+```
 
 ## 📁 Project Structure
 

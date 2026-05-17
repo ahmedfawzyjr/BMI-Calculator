@@ -35,9 +35,9 @@ class BMIChart extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: AppColors.activeCard.withOpacity(0.5),
+        color: AppColors.activeCard.withValues(alpha: 0.5),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
         ),
       ),
       child: LineChart(
@@ -52,13 +52,13 @@ class BMIChart extends StatelessWidget {
             getDrawingHorizontalLine: (value) {
               if (value == 18.5 || value == 25) {
                 return FlLine(
-                  color: AppColors.normal.withOpacity(0.3),
+                  color: AppColors.normal.withValues(alpha: 0.3),
                   strokeWidth: 1,
                   dashArray: [5, 5],
                 );
               }
               return FlLine(
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
                 strokeWidth: 1,
               );
             },
@@ -115,8 +115,8 @@ class BMIChart extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.hotPink.withOpacity(0.3),
-                    AppColors.hotPink.withOpacity(0.0),
+                    AppColors.hotPink.withValues(alpha: 0.3),
+                    AppColors.hotPink.withValues(alpha: 0.0),
                   ],
                 ),
               ),

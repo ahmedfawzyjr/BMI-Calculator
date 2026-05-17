@@ -18,4 +18,15 @@ class HistoryRepository {
     final box = await Hive.openBox<BMIHistory>(boxName);
     await box.clear();
   }
+
+  Future<void> deleteResult(String id) async {
+    final box = await Hive.openBox<BMIHistory>(boxName);
+    final keyToDelete = box.keys.firstWhere(
+      (k) => box.get(k)?.id == id,
+      orElse: () => null,
+    );
+    if (keyToDelete != null) {
+      await box.delete(keyToDelete);
+    }
+  }
 }

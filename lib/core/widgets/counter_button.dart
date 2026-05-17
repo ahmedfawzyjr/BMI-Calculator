@@ -43,23 +43,23 @@ class _CounterButtonState extends State<CounterButton>
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: _isPressed 
-              ? effectiveColor.withOpacity(0.8) 
+              ? effectiveColor.withValues(alpha: 0.8) 
               : AppColors.inactiveCard,
           border: Border.all(
-            color: effectiveColor.withOpacity(_isPressed ? 0.8 : 0.3),
+            color: effectiveColor.withValues(alpha: _isPressed ? 0.8 : 0.3),
             width: 2,
           ),
           boxShadow: _isPressed
               ? [
                   BoxShadow(
-                    color: effectiveColor.withOpacity(0.5),
+                    color: effectiveColor.withValues(alpha: 0.5),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -126,6 +126,7 @@ class AnimatedCounterWidget extends StatelessWidget {
   final VoidCallback onDecrement;
   final int minValue;
   final int maxValue;
+  final Color? activeColor;
 
   const AnimatedCounterWidget({
     super.key,
@@ -135,13 +136,15 @@ class AnimatedCounterWidget extends StatelessWidget {
     required this.onDecrement,
     this.minValue = 0,
     this.maxValue = 200,
+    this.activeColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
         Text(
           label,
           style: AppTextStyles.labelLarge,
@@ -165,7 +168,7 @@ class AnimatedCounterWidget extends StatelessWidget {
               icon: Icons.remove,
               onPressed: value > minValue ? onDecrement : () {},
               color: value > minValue 
-                  ? AppColors.hotPink 
+                  ? (activeColor ?? AppColors.hotPink) 
                   : AppColors.sliderInactive,
             ),
             const SizedBox(width: 20),
@@ -173,12 +176,13 @@ class AnimatedCounterWidget extends StatelessWidget {
               icon: Icons.add,
               onPressed: value < maxValue ? onIncrement : () {},
               color: value < maxValue 
-                  ? AppColors.hotPink 
+                  ? (activeColor ?? AppColors.hotPink) 
                   : AppColors.sliderInactive,
             ),
           ],
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 }
